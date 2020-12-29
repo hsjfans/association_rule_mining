@@ -8,12 +8,12 @@ import argparse
 import time
 
 
-def dummy_apriori(itemset, c_ks, support):
+def dummy_apriori(itemset, c_ks, support, num):
     all_lks = []
     all_sps = []
 
     def apriori(itemset, c_k, support):
-        l_ks, sp_s, itemset = generate_l_k(itemset, c_k, support)
+        l_ks, sp_s, itemset = generate_l_k(itemset, c_k, support, num)
         all_lks.extend(l_ks)
         all_sps.extend(sp_s)
         if len(l_ks) > 1:
@@ -25,23 +25,24 @@ def dummy_apriori(itemset, c_ks, support):
     return all_lks, all_sps
 
 
-def advanced_apriori1(itemset, c_ks, support):
+def advanced_apriori1(itemset, c_ks, support, num):
     pass
 
 
-def advanced_apriori3(itemset, c_ks, support):
+def advanced_apriori3(itemset, c_ks, support, num):
     pass
 
 
-def advanced_apriori2(itemset, c_ks, support):
+def advanced_apriori2(itemset, c_ks, support, num):
     all_lks = []
     all_sps = []
 
     def apriori(itemset, c_k, support):
-        l_ks, sp_s, itemset = generate_l_k(itemset, c_k, support, trick=True)
+        l_ks, sp_s, itemset = generate_l_k(
+            itemset, c_k, support, num, trick=True)
         all_lks.extend(l_ks)
         all_sps.extend(sp_s)
-        if len(l_ks) > 1:
+        if len(l_ks) > 1 and len(itemset) > 0:
             ck_plus_1s = generate_c_k_plus_1(l_ks)
             apriori(itemset, ck_plus_1s, support)
 
@@ -53,16 +54,17 @@ def advanced_apriori2(itemset, c_ks, support):
 def main(args):
     support = args.support
     itemset, c_ks = load_data(args.path)
+    num = len(itemset)
     logger.info(f'Using algorithm {args.ty}')
     start = time.time()
     if args.ty == 'dummy':
-        all_lks, all_sps = dummy_apriori(itemset, c_ks, support)
+        all_lks, all_sps = dummy_apriori(itemset, c_ks, support, num)
     elif args.ty == 'apriori1':
-        all_lks, all_sps = advanced_apriori1(itemset, c_ks, support)
+        all_lks, all_sps = advanced_apriori1(itemset, c_ks, support, num)
     elif args.ty == 'apriori2':
-        all_lks, all_sps = advanced_apriori2(itemset, c_ks, support)
+        all_lks, all_sps = advanced_apriori2(itemset, c_ks, support, num)
     elif args.ty == 'apriori3':
-        all_lks, all_sps = advanced_apriori3(itemset, c_ks, support)
+        all_lks, all_sps = advanced_apriori3(itemset, c_ks, support, num)
     else:
         raise(
             f"Not support algorithm {args.ty}, Please choose from [`dummy`,`apriori1`,`apriori2`,`apriori3`]")
