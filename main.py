@@ -124,9 +124,10 @@ def get_association_rules(all_lks, all_sps, confidence, model='fp'):
         return calculate_association_rules(all_lks, all_sps, confidence)
     else:
         raise(
-            f"Not support algorithm {model}, Please choose from [`fp`,`apriori`]")
+            f"Not support algorithm {model}, Please choose from [`fpgrowth`,`apriori`]")
 
 
+@profile
 def opt():
     parser = argparse.ArgumentParser(
         description='The association rule mining')
@@ -141,7 +142,7 @@ def opt():
                         help='The path of dataset')
     parser.add_argument('-ty', type=str,
                         default='dummy',
-                        help='The type of algorithm, must be one of [`dummy`,`apriori1`,`apriori2`,`apriori3`,`fp`]')
+                        help='The type of algorithm, must be one of [`dummy`,`apriori1`,`apriori2`,`apriori3`,`fpgrowth`]')
     args = parser.parse_args()
     if args.ty == 'fpgrowth':
         args.model = 'fpgrowth'
@@ -154,7 +155,8 @@ if __name__ == "__main__":
     args = opt()
     all_lks, all_sps, interval = main(args)
     k_set = get_k_set(all_lks, k=args.k)
-    print(len(all_lks), len(k_set), k_set)
+    logger.info(
+        f"len(all_lks):{len(all_lks)}, len(k_set):{len(k_set)}, k_set:{k_set}")
     rules = get_association_rules(
         all_lks, all_sps, args.confidence, model=args.model)
-    print(len(rules), rules)
+    logger.info(f"len(rules):{len(rules)}, rules:{rules}")
