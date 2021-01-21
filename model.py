@@ -150,6 +150,7 @@ def calculate_association_rules(all_lks, all_sps, confidence):
         counter[tuple(sorted(lk))] = sp
     rules = []
     filters = {}
+    full_rules = []
     for lk in tqdm(all_lks):
         # print(type(lk))
         for i in range(1, len(lk)):
@@ -160,6 +161,7 @@ def calculate_association_rules(all_lks, all_sps, confidence):
                 b_s = tuple(sorted(b))
                 key = tuple(sorted(lk))
                 max_info = None
+                rule = None
                 max_confidence = 0
                 if a_s in counter and (counter[key] / counter[a_s]) > confidence and (counter[key] / counter[a_s]) > max_confidence:
                     info = f'{a_s}:{b_s}, {(counter[key] / counter[a_s])}'
@@ -167,14 +169,18 @@ def calculate_association_rules(all_lks, all_sps, confidence):
                     if info not in filters:
                         max_info = info
                         filters[info] = 1
+                        rule = (a_s, b_s, max_confidence)
                 if b_s in counter and (counter[key] / counter[b_s]) > confidence and (counter[key] / counter[b_s]) > max_confidence:
                     info = f'{b_s}:{a_s}, { (counter[key] / counter[b_s])}'
                     max_confidence = (counter[key] / counter[b_s])
                     if info not in filters:
                         max_info = info
                         filters[info] = 1
+                        rule = (a_s, b_s, max_confidence)
                 if max_info is not None:
-                    rules.append(max_info)
+                    rules.append(rule)
+                    full_rules.append(lk)
+    # print(full_rules)
     return rules
 
 
